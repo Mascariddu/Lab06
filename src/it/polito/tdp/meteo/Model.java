@@ -51,7 +51,7 @@ public class Model {
 	public String trovaSequenza(int mese) {
 
 		String result = "totti";
-		spesaMigliore = 10000000000000000.0;
+		spesaMigliore = 500000.0;
 		migliore = new ArrayList<SimpleCity>();
 		List<SimpleCity> parziale = new ArrayList<SimpleCity>();
 		
@@ -69,10 +69,12 @@ public class Model {
 			
 			if(this.controllaParziale(parziale)) {
 				
-				if(this.punteggioSoluzione(parziale, mese)< this.spesaMigliore)
-					this.migliore= parziale;
+				if(this.punteggioSoluzione(parziale, mese)< this.spesaMigliore) {
+					this.migliore.clear();
+					this.migliore.addAll(parziale);
 					//System.out.println("§Piorcodododododod");
 					this.spesaMigliore = this.punteggioSoluzione(parziale, mese);
+				}
 			}
 			//System.out.println("§Piorcodododododod");
 			return;
@@ -83,7 +85,7 @@ public class Model {
 		
 		for(int i = 0; i<3; i++) {
 			
-			System.out.println("§Piorcodododododod");
+			//System.out.println("§Piorcodododododod");
 			exCitta = new SimpleCity(citta.get(i).getNome());
 			parziale.add(new SimpleCity(citta.get(i).getNome()));
 			if(this.controlloIntermedio(parziale, exCitta)) {
