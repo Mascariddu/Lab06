@@ -14,6 +14,10 @@ public class SimpleCity {
 		this.costo = costo;
 	}
 
+	public SimpleCity() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getNome() {
 		return nome;
 	}
