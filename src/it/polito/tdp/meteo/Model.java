@@ -50,57 +50,113 @@ public class Model {
 
 	public String trovaSequenza(int mese) {
 
-		String result = "totti";
-		spesaMigliore = 500000.0;
+		String result = "";
+		for(Citta c: citta)
+			System.out.println(c.getNome());
+		spesaMigliore = 100000000.0;
 		migliore = new ArrayList<SimpleCity>();
 		List<SimpleCity> parziale = new ArrayList<SimpleCity>();
 		
 		cerca(parziale,0,mese);
 		
-		for(SimpleCity sc : migliore)
-			result += sc.toString();
+		System.out.println(migliore.toString());
+		for(SimpleCity sc : migliore) {
+			result += sc.toString()+"\n";
+		}
 		
-		return result;
+		return result+ "Spesa: "+spesaMigliore;
 	}
 	
 	public void cerca(List<SimpleCity> parziale, int L,int mese) {
 		
-		if(L==15) {
+		
+		System.out.println("Livello: "+L);
+		if(L== Model.NUMERO_GIORNI_TOTALI) {
 			
-			if(this.controllaParziale(parziale)) {
+			System.out.println("condizione terminale");
 				
 				if(this.punteggioSoluzione(parziale, mese)< this.spesaMigliore) {
-					this.migliore.clear();
-					this.migliore.addAll(parziale);
-					//System.out.println("§Piorcodododododod");
+					migliore.clear();
+					migliore.addAll(parziale);
+					System.out.println("aggiorna migliore");
 					this.spesaMigliore = this.punteggioSoluzione(parziale, mese);
 				}
-			}
-			//System.out.println("§Piorcodododododod");
+				
 			return;
 		}
-		
-		//if(!this.controlloIntermedio(parziale, exCitta))
-			//return;  
-		
-		for(int i = 0; i<3; i++) {
 			
-			//System.out.println("§Piorcodododododod");
-			exCitta = new SimpleCity(citta.get(i).getNome());
-			parziale.add(new SimpleCity(citta.get(i).getNome()));
-			if(this.controlloIntermedio(parziale, exCitta)) {
-				cerca(parziale,L+1,mese);
-				parziale.remove(new SimpleCity(citta.get(i).getNome()));
+		for(Citta c: citta) {
+			
+					SimpleCity prova = new SimpleCity(c.getNome());
+					
+					if(this.controllaAggiunta(parziale,prova)) {
+				
+						parziale.add(prova);
+						System.out.println("parziale corretto");
+						for(SimpleCity sc: parziale)
+							System.out.println(sc.getNome());
+						cerca(parziale,L+1,mese);
+						parziale.remove(parziale.size()-1);
+						
+					} else {
+						System.out.println("parziale errato");
+						for(SimpleCity sc: parziale)
+							System.out.println(sc.getNome());
+					}
+			//for(SimpleCity sc: parziale)
+				//System.out.println(sc.getNome());
+			
+				}
 			}
-				else return;
-			
+
+	private boolean controllaAggiunta(List<SimpleCity> parziale, SimpleCity prova) {
+
+		int conta = 0;
+
+		for (SimpleCity precedente : parziale)
+
+			if (precedente.equals(prova))
+
+				conta++;
+
+		if (conta >= NUMERO_GIORNI_CITTA_MAX)
+
+			return false;
+
+
+
+		// verifica giorni minimi
+
+		if (parziale.size() == 0) // primo giorno
+
+			return true;
+
+		if (parziale.size() == 1 || parziale.size() == 2) { // secondo o terzo giorno: non posso cambiare
+
+			return parziale.get(parziale.size() - 1).equals(prova);
+
 		}
-		
+
+		if (parziale.get(parziale.size() - 1).equals(prova)) // giorni successivi, posso SEMPRE rimanere
+
+			return true;
+
+		// sto cambiando citta
+
+		if (parziale.get(parziale.size() - 1).equals(parziale.get(parziale.size() - 2))
+
+				&& parziale.get(parziale.size() - 2).equals(parziale.get(parziale.size() - 3)))
+
+			return true;
+
+
+
+		return false;
+	
 	}
 
 	private Double punteggioSoluzione(List<SimpleCity> soluzioneCandidata, int mese) {
 
-		MeteoDAO dao = new MeteoDAO();
 		SimpleCity cittaVecchia = new SimpleCity();
 		int i=1;
 		
@@ -110,7 +166,7 @@ public class Model {
 			
 			if(!cittaVecchia.equals(sc))
 				score+=100;
-			score += dao.getUmidita(mese,i,sc.getNome());
+			score += sc.getCosto(mese,i,sc.getNome());
 			cittaVecchia = sc;
 			i++;
 			
@@ -119,39 +175,4 @@ public class Model {
 		return score;
 	}
 
-	private boolean controllaParziale(List<SimpleCity> parziale) {
-
-		for(Citta c : citta) {
-			
-			for(SimpleCity sc : parziale) {
-				
-				if(sc.getNome().equals(c.getNome()))
-					c.increaseCounter();
-				
-			}
-			
-			if(c.getCounter()==0 || c.getCounter()>6)
-				return false;
-		}
-		
-		return true;
-	}
-	
-	private boolean controlloIntermedio(List<SimpleCity> parziale, SimpleCity exC) {
-
-		int pernottamento = 0;
-		
-		for(SimpleCity sc: parziale) {
-		
-			if(exC.equals(sc))
-				pernottamento++;
-			else pernottamento =0;
-			
-			exC = sc;
-			
-		}
-		
-		return true;
-	}
-	
 }

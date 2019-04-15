@@ -1,9 +1,12 @@
 package it.polito.tdp.meteo.bean;
 
+import it.polito.tdp.meteo.db.MeteoDAO;
+
 public class SimpleCity {
 
 	private String nome;
 	private int costo;
+	private int contaGG;
 	
 	public SimpleCity(String nome) {
 		this.nome = nome;
@@ -62,6 +65,21 @@ public class SimpleCity {
 	@Override
 	public String toString() {
 		return nome;
+	}
+
+	public double getCosto(int mese, int i,String localita) {
+		// TODO Auto-generated method stub
+		MeteoDAO dao = new MeteoDAO();
+		
+		return dao.getUmidita(mese, i, localita);
+	}
+
+	public int getContaGG() {
+		return contaGG;
+	}
+
+	public void setContaGG(int contaGG) {
+		this.contaGG = contaGG;
 	}
 	
 }
